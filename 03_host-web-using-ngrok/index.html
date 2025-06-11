@@ -3,25 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Local Web Page</title>
+  <title>Drag & Drop List with Buttons</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      text-align: center;
-      padding: 50px;
+      font-family: sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
     }
-    h1 {
+
+    h2 {
       color: #333;
     }
-    p {
-      font-size: 18px;
+
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 300px;
+    }
+
+    li {
+      margin: 8px 0;
+      padding: 10px;
+      background: white;
+      border: 1px solid #ccc;
+      cursor: grab;
+    }
+
+    li.dragging {
+      opacity: 0.5;
+    }
+
+    button {
+      margin-top: 20px;
+      margin-right: 10px;
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
-  <h1>Welcome to 192.168.1.1</h1>
-  <p>This is a simple page hosted locally.</p>
+  <h2>Draggable List</h2>
+
+  <ul id="draggable-list">
+    <li draggable="true">Item 1</li>
+    <li draggable="true">Item 2</li>
+    <li draggable="true">Item 3</li>
+    <li draggable="true">Item 4</li>
+  </ul>
+
+  <button onclick="alert('Button 1 clicked!')">Button 1</button>
+  <button onclick="alert('Button 2 clicked!')">Button 2</button>
+
+  <script>
+    const list = document.getElementById('draggable-list');
+    let draggedItem = null;
+
+    list.addEventListener('dragstart', (e) => {
+      draggedItem = e.target;
+      e.target.classList.add('dragging');
+    });
+
+    list.addEventListener('dragend', (e) => {
+      e.target.classList.remove('dragging');
+      draggedItem = null;
+    });
+
+    list.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const afterElement = getDragAfterElement(list, e.clientY);
+      const dragging = document.querySelector('.dragging');
+      if (afterElement == null) {
+        list.appendChild(dragging);
+      } else {
+        list.insertBefore(dragging, afterElement);
+      }
+    });
+
+    function getDragAfterElement(container, y) {
+      const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
+
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+  </script>
 </body>
 </html>
 

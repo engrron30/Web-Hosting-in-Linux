@@ -6,7 +6,7 @@ HOSTING_PT="${2:-8080}"
 echo "✅ Local IP is: $HOSTING_IP"
 echo "🚀 Starting local Python HTTP server on port $HOSTING_PT..."
 python3 -m http.server "$HOSTING_PT" &
-sleep 2
+
 
 # (1) Make sure you have install ngrok. The command below can be used to install
 #     ngrok in your Ubuntu. 
@@ -22,18 +22,9 @@ sleep 2
 #     with the following command:
 
 # ngrok config add-authtoken <token-id>
-ngrok config add-authtoken 2yIefj8yzL28U8JnB9RYaLq93cc_89kqU6E77Ax4SsLACxY5H
 
 # (3) Make sure you have already created your ngrok account to start
 #     the web hosting. Run the command below after preparing your ngrok
 #     account:
 
-ngrok http http://localhost:8080 &
-NGROK_PID=$!
-sleep 2
-
-sleep 3
-NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | grep -oP '"public_url":"https://[^"]*' | cut -d\" -f4)
-echo "🔗 Ngrok Public URL: $NGROK_URL"
-
-wait $NGROK_PID
+# ngrok http --url=funny-hot-tiger.ngrok-free.app 80
